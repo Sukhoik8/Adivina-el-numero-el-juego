@@ -20,6 +20,10 @@ int main() {
     
     sf::Texture Chica1;
     if (!Chica1.loadFromFile("Recursos/Sakura.png")) { /* error */ }
+	
+	sf::Texture Corazon_texture;
+	if (!Corazon_texture.loadFromFile("Recursos/Heart.png")) { /* error */ }
+
     
     sf::Font font;
     if (!font.loadFromFile("Recursos/arial.ttf")) return -1;
@@ -42,9 +46,14 @@ int main() {
     texto_Logo.setString("Adivina el numero");
     texto_Logo.setPosition(100.0f, 30.0f);
     
-    sf::Sprite Waifu1;
+    sf::Sprite Waifu1; //Sprite de Waifu de Fondo
     Waifu1.setTexture(Chica1);
     Waifu1.setPosition(360.0f, 70.0f);
+	
+	sf::Sprite Hearts; //Sprite de Corazon
+	Hearts.setTexture(Corazon_texture);
+	Hearts.setPosition(20.0f, 20.0f);
+	Hearts.setScale(0.2f, 0.2f);
 
     string options[] = {"Jugar", "Opciones", "Creditos", "Dificultad", "Facil", "Normal", "Dificil", "Regresar", "Musica: ", "On", "Off"};
 	
@@ -81,7 +90,7 @@ int main() {
                     // Botón Créditos (índice 2)
                     texto.setString(options[2]);
                     texto.setPosition(30.0f, 320.0f + (2 * 80.0f));
-                    if (texto.getGlobalBounds().contains(mousePos)) cout << "Creditos pulsado" << endl;
+                    if (texto.getGlobalBounds().contains(mousePos)) system("Creditos.txt");;
                 } 
                 else if (current_room == 2) {
                     // Botón Regresar (índice 7)
@@ -94,8 +103,44 @@ int main() {
                     texto.setPosition(30.0f, 320.0f);
                     if (texto.getGlobalBounds().contains(mousePos)) {
                         dificultad++;
-                        if (dificultad > 6) dificultad = 4; // Cicla entre 4, 5 y 6
+						if (dificultad == 4){
+							vidas = 8;
+							
+						} else if (dificultad == 5){
+							vidas = 5;
+							
+						} else {
+							
+							vidas = 3;
+							
+						}
+						
+                        if (dificultad > 6) {
+							dificultad = 4;
+							vidas = 8;// Cicla entre 4, 5 y 6
                     }
+					}
+					
+					if (musicOn){ // Boton Quitar Musica
+					texto.setString(options[8] + options[9]);
+					texto.setPosition(30.0f, 400.0f);
+					if (texto.getGlobalBounds().contains(mousePos)) {
+					song.stop();
+					musicOn = false;
+					
+					}
+					} else { //Boton Poner Musica
+						texto.setString(options[8] + options[10]);
+					texto.setPosition(30.0f, 400.0f);
+					if (texto.getGlobalBounds().contains(mousePos)) {
+					song.play();
+										musicOn = true;
+
+						
+						
+						
+					}
+					}
                 }
             }
         }
@@ -104,6 +149,17 @@ int main() {
         window.clear(rosa);
 
         if (current_room == 1) {
+			 //Corazones
+			for (int i = 1; i < vidas + 1; i++){
+				
+				Hearts.setPosition(20.0f * (3.0f * i), 20.0f);
+				window.draw(Hearts);
+
+				
+				
+			}
+			
+			
 			window.draw(MenuForm);
             window.draw(texto_Logo);
             window.draw(Waifu1);
@@ -159,7 +215,12 @@ int main() {
             if (texto.getGlobalBounds().contains(mousePos)) texto.setFillColor(sf::Color::Yellow);
             else texto.setFillColor(sf::Color::White);
             window.draw(texto);
-        }
+        } else if (current_room == 3) { //Dibujado del Gameplay
+			
+			
+			
+			
+		}
 		
         window.display();
     }
